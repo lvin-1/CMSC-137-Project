@@ -27,14 +27,15 @@ public class Main extends Application {
     private Goal leftGoal;
     private Goal rightGoal;
     private ScoreBoard scoreBoard;
+    private static String playerID;
 
     @Override
     public void start(Stage primaryStage) throws InterruptedException {
         try {
-        	String playerID;
+        	String[] args = getParameters().getRaw().toArray(new String[0]);
+            playerID = getPlayerID(args);
             // Start the server only if this is the server instance
-            if (isServerInstance()) {
-            	playerID = "1";
+            if (playerID.equals("1")) {
                 new Thread(() -> {
                     try {
                         GameServer server = new GameServer(SERVER_PORT);
@@ -43,8 +44,6 @@ public class Main extends Application {
                         e.printStackTrace();
                     }
                 }).start();
-            }else {
-            	playerID = getPlayerID();
             }
             
             players = new Player[4];
@@ -113,13 +112,12 @@ public class Main extends Application {
             e.printStackTrace();
         }
     }
-
-    private boolean isServerInstance() {
-        return Boolean.parseBoolean(System.getProperty("isServer", "false"));
-    }
     
-    private String getPlayerID(){
-    	return System.getProperty("ID","2");
+    private String getPlayerID(String[] args) {
+        if (args.length > 0) {
+            return args[0];
+        }
+        throw new IllegalArgumentException("Player ID must be provided as an argument");
     }
     
 
