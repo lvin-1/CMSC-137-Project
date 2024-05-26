@@ -13,7 +13,7 @@ abstract class Sprite {
     }
 
     public abstract void checkCollision(Sprite other);
-    
+
     public abstract double getRadius();
 
     public double getCenterX() {
@@ -28,3 +28,4 @@ abstract class Sprite {
         return circle;
     }
 }
+

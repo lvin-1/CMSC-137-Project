@@ -11,58 +11,78 @@ class Player extends Sprite {
     private DatagramSocket socket; // Declare as class member
     private InetAddress serverAddress; // Declare as class member
     private int serverPort; // Declare as class member
+    private static final int WINDOW_WIDTH = 1000;
+    private static final int WINDOW_HEIGHT = 500;
+    private String playerID;
 
-    public Player(double x, double y, double radius, Color color, DatagramSocket socket, InetAddress serverAddress, int serverPort) {
+    public Player(double x, double y, double radius, Color color, String playerID, DatagramSocket socket, InetAddress serverAddress, int serverPort) {
         super(x, y, radius, color);
         this.socket = socket;
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
+        this.playerID = playerID;
     }
 
     public void move(KeyCode code) {
         switch (code) {
             case W:
-                this.getCircle().setCenterY(this.getCircle().getCenterY() - 10);
+                if (this.getCircle().getCenterY() - radius - 10 >= 0) {
+                    this.getCircle().setCenterY(this.getCircle().getCenterY() - 10);
+                }
                 break;
             case S:
-            	this.getCircle().setCenterY(this.getCircle().getCenterY() + 10);
+                if (this.getCircle().getCenterY() + radius + 10 <= WINDOW_HEIGHT) {
+                    this.getCircle().setCenterY(this.getCircle().getCenterY() + 10);
+                }
                 break;
             case A:
-            	this.getCircle().setCenterX(circle.getCenterX() - 10);
+                if (this.getCircle().getCenterX() - radius - 10 >= 0) {
+                    this.getCircle().setCenterX(this.getCircle().getCenterX() - 10);
+                }
                 break;
             case D:
-            	this.getCircle().setCenterX(circle.getCenterX() + 10);
+                if (this.getCircle().getCenterX() + radius + 10 <= WINDOW_WIDTH) {
+                    this.getCircle().setCenterX(this.getCircle().getCenterX() + 10);
+                }
                 break;
             case ENTER:
-            	 try {
-	                   sendMessage("Hello from player");
-	               } catch (IOException e) {
-	                   e.printStackTrace();
-	               }
-            	 break;
+                try {
+                    sendMessage("Player "+this.playerID +": Hello");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
             case U:
-           	 try {
-	                   sendMessage("Show Emote 1");
-	               } catch (IOException e) {
-	                   e.printStackTrace();
-	               }
-           	 break;
+                try {
+                    sendMessage("Player "+this.playerID +" Showed Emote 1");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
             case I:
-              	 try {
-   	                   sendMessage("Show Emote 2");
-   	               } catch (IOException e) {
-   	                   e.printStackTrace();
-   	               }
-              	 break;
+                try {
+                    sendMessage("Player "+this.playerID +" Showed Emote 2");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
             case O:
-              	 try {
-   	                   sendMessage("Show Emote 3");
-   	               } catch (IOException e) {
-   	                   e.printStackTrace();
-   	               }
-              	 break;
-            	 
+                try {
+                    sendMessage("Player "+this.playerID +" Showed Emote 3");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
+        String xpos = this.getCenterX()+"";
+        String ypos = this.getCenterY()+"";
+        try {
+			this.sendMessage("Move " + xpos + " " + ypos + " " + this.playerID);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
     }
 
     @Override
@@ -79,25 +99,19 @@ class Player extends Sprite {
             other.getCircle().setCenterY(other.getCenterY() - directionY * 20);
         }
     }
-    
+
     @Override
     public double getRadius() {
         return radius;
     }
-    
+
     public void sendMessage(String message) throws IOException {
         byte[] buffer = message.getBytes();
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, serverAddress, serverPort);
         socket.send(packet);
     }
-    
-//    public void handleKeyPress(KeyCode code) {
-//        if (code == KeyCode.ENTER) {
-//            try {
-//                sendMessage("Hello from player");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+
+    public String getPlayerID() {
+    	return this.playerID;
+    }
 }
