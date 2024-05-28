@@ -33,6 +33,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws InterruptedException {
         try {
         	String[] args = getParameters().getRaw().toArray(new String[0]);
+        	String serverIP = args[1];
             playerID = getPlayerID(args);
             // Start the server only if this is the server instance
             if (playerID.equals("1")) {
@@ -45,7 +46,7 @@ public class Main extends Application {
                     }
                 }).start();
             }
-            InetAddress serverAddress = InetAddress.getLocalHost();
+            InetAddress serverAddress = InetAddress.getByName(serverIP);
             players = new Player[4];
             gameStage = new GameStage(primaryStage,serverAddress,SERVER_PORT,this.playerID);
             // Create a client instance
