@@ -18,11 +18,11 @@ class Goal extends Sprite {
 
     @Override
     public void checkCollision(Sprite other) {
-        if (rectangle.getBoundsInParent().intersects(other.getCircle().getBoundsInParent())) {
+        if (rectangle.getBoundsInParent().intersects(((Ball) other).getImageView().getBoundsInParent())) {
             if (other instanceof Ball) {
                 // Reset the ball position if it collides with the goal
-                other.getCircle().setCenterX(500);
-                other.getCircle().setCenterY(250);
+                ((Ball) other).getImageView().setX(500 - other.getRadius());
+                ((Ball) other).getImageView().setY(250 - other.getRadius());
                 if (isLeftGoal) {
                     scoreBoard.incrementRightScore();
                 } else {

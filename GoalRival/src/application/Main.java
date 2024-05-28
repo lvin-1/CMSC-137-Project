@@ -17,7 +17,7 @@ public class Main extends Application {
     private static final double PLAYER_RADIUS = 30;
     private static final double BALL_RADIUS = 20;
     private static final double GOAL_WIDTH = 10;
-    private static final double GOAL_HEIGHT = 200;
+    private static final double GOAL_HEIGHT = 135;
     private static final int SERVER_PORT = 5000;
 
     private Player[] players;
@@ -45,19 +45,19 @@ public class Main extends Application {
                     }
                 }).start();
             }
-            
-            players = new Player[4];
-            gameStage = new GameStage(primaryStage);
-            // Create a client instance
             InetAddress serverAddress = InetAddress.getLocalHost();
-            GameClient client = new GameClient(playerID, players, serverAddress, SERVER_PORT, gameStage);
+            players = new Player[4];
+            gameStage = new GameStage(primaryStage,serverAddress,SERVER_PORT,this.playerID);
+            // Create a client instance
+            GameClient client = new GameClient(playerID, players, serverAddress, SERVER_PORT, this.gameStage);
             client.receiveMessages();
 
-            
+
 
             scoreBoard = new ScoreBoard(gameStage.getRoot());
             ball = new Ball(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, BALL_RADIUS, Color.RED);
-            gameStage.getRoot().getChildren().add(ball.getCircle());
+            gameStage.getRoot().getChildren().add(ball.getImageView());
+
 
             leftGoal = new Goal(0, (WINDOW_HEIGHT - GOAL_HEIGHT) / 2, GOAL_WIDTH, GOAL_HEIGHT, Color.GREEN, scoreBoard, true);
             rightGoal = new Goal(WINDOW_WIDTH - GOAL_WIDTH, (WINDOW_HEIGHT - GOAL_HEIGHT) / 2, GOAL_WIDTH, GOAL_HEIGHT, Color.GREEN, scoreBoard, false);
@@ -67,35 +67,30 @@ public class Main extends Application {
             Color color;
 
             switch (playerID) {
-                case "1":
-                    startX = WINDOW_WIDTH / 4;
-                    startY = WINDOW_HEIGHT / 2;
-                    color = Color.BLUE;
-                    players[0] = new Player(startX, startY, PLAYER_RADIUS, color, playerID, client.getSocket(), serverAddress, SERVER_PORT);
-                    break;
-                case "2":
-                    startX = WINDOW_WIDTH / 8;
-                    startY = WINDOW_HEIGHT / 2;
-                    color = Color.GREEN;
-                    players[1] = new Player(startX, startY, PLAYER_RADIUS, color, playerID, client.getSocket(), serverAddress, SERVER_PORT);
-                    break;
-                case "3":
-                    startX = WINDOW_WIDTH - WINDOW_WIDTH / 4;
-                    startY = WINDOW_HEIGHT / 2;
-                    color = Color.YELLOW;
-                    players[2] = new Player(startX, startY, PLAYER_RADIUS, color, playerID, client.getSocket(), serverAddress, SERVER_PORT);
-                    break;
-                case "4":
-                    startX = WINDOW_WIDTH - WINDOW_WIDTH / 8;
-                    startY = WINDOW_HEIGHT / 2;
-                    color = Color.ORANGE;
-                    players[3] = new Player(startX, startY, PLAYER_RADIUS, color, playerID, client.getSocket(), serverAddress, SERVER_PORT);
-                    break;
-                default:
-                    throw new IllegalStateException("Unexpected playerID: " + playerID);
-            }
-            
-            
+            case "1":
+                startX = WINDOW_WIDTH / 4;
+                startY = WINDOW_HEIGHT / 2;
+                players[0] = new Player(startX, startY, PLAYER_RADIUS, playerID, client.getSocket(), serverAddress, SERVER_PORT,this.gameStage);
+                break;
+            case "2":
+                startX = WINDOW_WIDTH /11;
+                startY = WINDOW_HEIGHT / 2;
+                players[1] = new Player(startX, startY, PLAYER_RADIUS, playerID, client.getSocket(), serverAddress, SERVER_PORT,this.gameStage);
+                break;
+            case "3":
+                startX = WINDOW_WIDTH - WINDOW_WIDTH / 4;
+                startY = WINDOW_HEIGHT / 2;
+                players[2] = new Player(startX, startY, PLAYER_RADIUS, playerID, client.getSocket(), serverAddress, SERVER_PORT,this.gameStage);
+                break;
+            case "4":
+                startX = WINDOW_WIDTH - WINDOW_WIDTH/11;
+                startY = WINDOW_HEIGHT / 2;
+                players[3] = new Player(startX, startY, PLAYER_RADIUS, playerID, client.getSocket(), serverAddress, SERVER_PORT,this.gameStage);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected playerID: " + playerID);
+        }
+
             Player currentPlayer = players[Integer.parseInt(playerID) - 1];
             gameStage.getRoot().getChildren().add(currentPlayer.getCircle());
             gameStage.getRoot().getScene().setOnKeyPressed(event -> currentPlayer.move(event.getCode()));
@@ -106,20 +101,20 @@ public class Main extends Application {
             gameStage.getRoot().getChildren().addAll(leftGoal.getRectangle(), rightGoal.getRectangle());
             gameStage.show();
             gameTimer.start();
-            
+
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    
+
     private String getPlayerID(String[] args) {
         if (args.length > 0) {
             return args[0];
         }
         throw new IllegalArgumentException("Player ID must be provided as an argument");
     }
-    
+
 
     public static void main(String[] args) {
         launch(args);

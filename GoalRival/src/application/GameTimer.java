@@ -22,8 +22,9 @@ public class GameTimer extends AnimationTimer {
     		  player.checkCollision(ball);
         	  ball.checkCollision(player);
     	  }
-    	  
+
       }
+      ball.updatePosition();
       leftGoal.checkCollision(ball);
       rightGoal.checkCollision(ball);
     }

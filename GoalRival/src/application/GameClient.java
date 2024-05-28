@@ -41,11 +41,11 @@ public class GameClient {
                 try {
                     socket.receive(packet);
                     String receivedMessage = new String(packet.getData(), 0, packet.getLength());
-                    String[] messageParts = receivedMessage.split(" ", 4);
+//                    String[] messageParts = receivedMessage.split(" ", 4);
                     if (receivedMessage.equals("AlreadyConnected")) {
                         this.connectionConfirmed = true;
                     }
-                    checkConnectionMessage(messageParts);
+                    checkConnectionMessage(receivedMessage);
                     System.out.println("Server:");
                     System.out.println(receivedMessage);
                 } catch (IOException e) {
@@ -59,7 +59,8 @@ public class GameClient {
         return socket;
     }
 
-    private void checkConnectionMessage(String[] arr) {
+    private void checkConnectionMessage(String msg) {
+    	String[] arr = msg.split(" ",4);
         if (arr[0].equals("Connect")) {
             String receivedPlayerID = arr[3];
             if (!receivedPlayerID.equals(this.playerID)) {
@@ -68,6 +69,12 @@ public class GameClient {
         }else if(arr[0].equals("Move")) {
         	String receivedPlayerID = arr[3];
         	movePlayer(receivedPlayerID,Double.parseDouble(arr[1]), Double.parseDouble(arr[2]));
+        }else if(arr[0].equals("Chat")) {
+        	String[] toSend = msg.split(" ",3);
+        	String receivedPlayerID = arr[1];
+        	if(!receivedPlayerID.equals(this.playerID)){
+        		this.stage.appendMessage("Player " + receivedPlayerID + ": "+toSend[2]+"\n");
+        	}
         }
     }
 
@@ -90,13 +97,13 @@ public class GameClient {
                         color = Color.ORANGE;
                         break;
                 }
-                players[playerIndex] = new Player(x, y, PLAYER_RADIUS, color, playerID, socket, serverAddress, serverPort);
+                players[playerIndex] = new Player(x, y, PLAYER_RADIUS, playerID, socket, serverAddress, serverPort, this.stage);
                 stage.getRoot().getChildren().add(players[playerIndex].getCircle());
                 sendExistingPlayers(playerID);
             }
         });
     }
-    
+
     private void movePlayer(String playerID, double x, double y) {
     	 Platform.runLater(() -> {
              int playerIndex = Integer.parseInt(playerID) - 1;
@@ -121,7 +128,7 @@ public class GameClient {
     public boolean isConnectionConfirmed() {
         return this.connectionConfirmed;
     }
-    
+
     public void sendMovementUpdate(String playerID, double x, double y) {
         String message = "Move " + x + " " + y + " " + playerID;
         try {
@@ -129,5 +136,9 @@ public class GameClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    public void receivedChat() {
+    	this.stage.showChatBox();
     }
 }

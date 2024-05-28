@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+
 public class ScoreBoard {
     private int leftScore;
     private int rightScore;
@@ -17,11 +18,11 @@ public class ScoreBoard {
 
         leftScoreText = new Text(20, 20, "Score: 0");
         leftScoreText.setFont(new Font(20));
-        leftScoreText.setFill(Color.BLACK);
+        leftScoreText.setFill(Color.WHITE);
 
         rightScoreText = new Text(800, 20, "Score: 0");
         rightScoreText.setFont(new Font(20));
-        rightScoreText.setFill(Color.BLACK);
+        rightScoreText.setFill(Color.WHITE);
 
         root.getChildren().addAll(leftScoreText, rightScoreText);
     }

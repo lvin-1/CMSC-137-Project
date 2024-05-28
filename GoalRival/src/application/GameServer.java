@@ -56,7 +56,7 @@ public class GameServer {
         }
     }
 
-    
+
     private static class ClientInfo {
         private final InetAddress address;
         private final int port;
