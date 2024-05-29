@@ -7,12 +7,14 @@ public class GameTimer extends AnimationTimer {
     private Ball ball;
     private Goal leftGoal;
     private Goal rightGoal;
+    private ScoreBoard scoreBoard;
 
-    public GameTimer(Player[] players, Ball ball, Goal leftGoal, Goal rightGoal) {
+    public GameTimer(Player[] players, Ball ball, Goal leftGoal, Goal rightGoal, ScoreBoard scoreBoard) {
         this.players = players;
         this.ball = ball;
         this.leftGoal = leftGoal;
         this.rightGoal = rightGoal;
+        this.scoreBoard = scoreBoard;
     }
 
     @Override
@@ -27,5 +29,10 @@ public class GameTimer extends AnimationTimer {
       ball.updatePosition();
       leftGoal.checkCollision(ball);
       rightGoal.checkCollision(ball);
+      
+      // Check if the game should be stopped
+      if (scoreBoard.getLeftScore()>= 5 || scoreBoard.getRightScore() >= 5) {
+          this.stop();
+      }
     }
 }

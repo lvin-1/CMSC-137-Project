@@ -96,7 +96,7 @@ public class Main extends Application {
             gameStage.getRoot().getChildren().add(currentPlayer.getCircle());
             gameStage.getRoot().getScene().setOnKeyPressed(event -> currentPlayer.move(event.getCode()));
 
-            gameTimer = new GameTimer(this.players, ball, leftGoal, rightGoal);
+            gameTimer = new GameTimer(this.players, ball, leftGoal, rightGoal, scoreBoard);
             client.sendMessage("Connect " + currentPlayer.getCenterX() + " " + currentPlayer.getCenterY() + " " + playerID);
 
             gameStage.getRoot().getChildren().addAll(leftGoal.getRectangle(), rightGoal.getRectangle());
